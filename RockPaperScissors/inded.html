@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #bdd2d6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            background: #F7F7F7;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+        /* Container to center and style the game elements */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Styling for the select menu */
+        .styled-select {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #007BFF;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .styled-select:hover, .styled-select:focus {
+            border-color: #0056b3;
+            color: #0056b3;
+            outline: none;
+        }
+
+        /* Styling for the button */
+        .btnTrow {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btnTrow:hover {
+            background-color: #0056b3;
+        }
+
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #4a90e2;
+        }
+
+        .display, .input, .winner, .score, .reset {
+            margin: 20px 0;
+        }
+
+        .userDisplay, .compDisplay {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .yourDisplay, .computerDisplay {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #357ab7;
+        }
+
+        .winnerDisplay, .scoreDisplay {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .reset button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reset button:hover {
+            background-color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rock Paper Scissors</h1>
+        <div class="display">
+            <div class="userDisplay">
+                <p>You: </p>
+                <div class="yourDisplay"></div>
+            </div>
+            <div class="compDisplay">
+                <p>Computer: </p>
+            <div class="computerDisplay"></div>
+            </div>
+        </div>
+        <div class="user">
+            <select id="UserTrow" class="styled-select">
+                <option value="rock">Rock</option>
+                <option value="paper">Paper</option>
+                <option value="scissors">Scissors</option>
+            </select> 
+            <button class="btnTrow">Throw</button>
+        </div>
+        <div>
+            <p class="winnerDisplay">Winner Display!</p>
+        </div>
+        <div>
+            <p class="scoreDisplay">Your Score: 0 Computer: 0</p>
+        </div>
+        <div class="reset">
+            <button id="btnReset">Reset</button>
+        </div>
+    </div>
+</body>
+<script>
+    let yourScore = 0;
+    let compScore = 0;
+    // composition class
+    class Display{
+        // get the value in html
+        constructor(){
+            this.yourDisplay = document.querySelector(".yourDisplay");
+            this.computerDisplay = document.querySelector(".computerDisplay");
+            this.scoreDisplay = document.querySelector(".scoreDisplay");
+            this.winnerDsisplay = document.querySelector(".winnerDisplay");
+        }
+        // then display the value of user trow and the computer trow
+        displayTrow(user, computer){
+            let userTrow = ""
+            let compTrow = ""
+            // check the value of user and computer
+            if (user == 1){
+                userTrow = "Rock"
+            }else if(user == 2){
+                userTrow = "Paper"
+            }else if(user == 3){
+                userTrow = "Scissors"
+            }
+            if (computer == 1){
+                compTrow = "Rock"
+            }else if(computer == 2){
+                compTrow = "Paper"
+            }else if(computer == 3){
+                compTrow = "Scissors"
+            }
+            // display it in dom
+            this.yourDisplay.textContent = userTrow
+            this.computerDisplay.textContent = compTrow
+        }
+        // display scrore of user and computer
+        displayScores(){
+            this.scoreDisplay.textContent = `Your Score: ${yourScore} Computer Score: ${compScore}`;
+        }
+        // reset the score
+        displayReset(){
+            yourScore = 0
+            compScore = 0
+            this.scoreDisplay.textContent = `Your Score: ${yourScore} Computer Score: ${compScore}`;
+            this.winnerDsisplay.textContent = ""
+            this.yourDisplay.textContent = ""
+            this.computerDisplay.textContent =""
+        }
+
+    }
+
+    // polymorphism a templates class that inherite other class whith the same name and function
+    class Player{
+        constructor(){
+            // create a instance of composition class
+            this.display = new Display();
+        }
+        // polymorphism 
+        trow(){
+            let getTrow = prompt("Rock, Paper or Scissors?");
+            return;
+        }
+
+    }
+    class UserTrow extends Player{
+        constructor(){
+            super();
+            this.display = new Display();
+        }
+        trow(){
+            // in the user class with the method of trow
+            // get the user trow in the select html
+            let user = document.getElementById('UserTrow').value;
+            // and make a condition 
+            // if the user trow is rock, paper or scissors
+            // return the value of the trow
+            if(user == 'rock'){
+                return 1
+            }else if(user == 'paper'){
+                return 2
+            }else if(user == 'scissors'){
+                return 3
+            }
+            return -1;
+        }
+    }
+    class ComputerTrow extends Player{
+        constructor(){
+            super();
+            this.display = new Display();
+        }
+        trow(){
+            // in the computer class with the method of trow
+            // make a random number between 1 and 3
+            // and return the value of the trow
+            let random = Math.floor(Math.random() * 3) + 1
+            return random
+        }
+    }
+
+    // create a fucntion to check the winners
+    function checkWinners(){
+        let winnerDsisplay = document.querySelector(".winnerDisplay");
+        // asynchronous function
+        // create a promise that wait for the user trow and computer trow
+        // and check the winner
+        // if the user trow is equal to the computer trow
+        // return a message of tie
+        // if the user trow is equal to rock and the computer trow is equal to scissors
+        const wait = new Promise((resolve) => {
+            // create a instance of classes
+            const player = new Player();
+            const userTrow = new UserTrow();
+            const computerTrow = new ComputerTrow();
+            // polymorphism call
+            let computer = computerTrow.trow();
+            let user = userTrow.trow();
+            // composition call
+            player.display.displayTrow(user, computer);
+            // create a condition to check the wnner
+            // if the user trow is equal to the computer trow
+            if (user == computer){
+                winnerDsisplay.textContent = "its a Tie"
+                resolve('its a Tie');
+                return;
+            }
+            // if user is equal to rock and computer is equal to scissors
+            // or user is equal to paper and computer is equal to rock
+            // or user is equal to scissors and computer is equal to paper
+            // user win
+            if ((user == 1 && computer == 3) || (user == 2 && computer == 1) || (user == 3 &&  computer == 2)){
+                winnerDsisplay.textContent = "You Win"
+                yourScore += 1;
+                player.display.displayScores();
+                resolve('You Win');
+                return;
+            }
+            // if user is equal to rock and computer is equal to scissors
+            // or user is equal to paper and computer is equal to rock
+            // or user is equal to scissors and computer is equal to paper
+            // computer win
+            if ((computer == 1 && user == 3) || (computer == 2 && user == 1) || (computer == 3 &&  user == 2)){
+                winnerDsisplay.textContent = "Computer Win"
+                compScore += 1;
+                player.display.displayScores();
+                resolve('Computer Win');
+                return;
+            }
+        });
+        // calss the asyn
+        wait.then((value) => {
+            setTimeout(() => {
+                alert(value);
+            },1000);
+        })
+    }
+    document.querySelector('.btnTrow').addEventListener('click', ()=>{
+        checkWinners();
+        // create a instance of the class user
+    });
+    document.querySelector('#btnReset').addEventListener('click', ()=>{
+        // reset the scores
+        let player = new Player();
+        player.display.displayReset();
+        alert('Scores reset !!');
+    });
+</script>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter</title>
+    <style>
+        /* styles.css */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #5EBEC4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #FDF5DF;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #F92C85;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #a9265f;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px 20px;
+            }
+        }
+
+    </style>
+    <script>
+        // composition class to identify the type of conversion
+       class ConvererType {
+            binary(){
+                return 'The decimal number converts to binary';
+            }
+            octal(){
+                return 'The decimal number converts to octal';
+            }
+            hexadecimal(){
+                return 'The decimal number converts to hexadecimal';
+            }   
+       }
+       // polymorphism
+       // main class extends different class to perform same task
+       class DecimalToBinary {
+            constructor(demical){
+                this.demical = demical;
+                // call the composition class
+                this.type = new ConvererType();
+            }
+            // polymorphism
+            // this function is to convert the decimal number to binary
+            // function changes a decimal number into a binary number by repeatedly dividing the decimal number by 2 and recording the remainders. 
+            // It then reverses the order of the remainders to form the final binary number.
+            convert(){
+                let answer = [];
+                let result = "";
+                while(this.demical != 0){
+                    let rem = this.demical % 2;
+                    answer.push(rem);
+                    this.demical = Math.floor(this.demical / 2);
+                }
+                for(let i = answer.length-1; i >= 0; i--){
+                    result += answer[i]
+                }
+                return result;
+            }
+       }
+      
+       class DecimalToOctal extends DecimalToBinary{
+            constructor(demical){
+                super(demical);
+                // call the composition class
+                this.type = new ConvererType();
+            }
+            // polymorphism
+             // this function is to convert the decimal number to octal
+             // The function changes a decimal number into an octal number by repeatedly dividing the decimal number by 8 and recording the remainders. 
+             // It then reverses the order of the remainders to form the final octal number.
+            convert(){
+                let answer = [];
+                let result = "";
+                while(this.demical != 0){
+                    let rem = this.demical % 8;
+                    answer.push(rem);
+                    this.demical = Math.floor(this.demical / 8);
+                }
+                for(let i = answer.length-1; i >= 0; i--){
+                    result += answer[i]
+                }
+                return result;
+            }
+       }
+       class DecimalToHexadecimal extends DecimalToOctal{
+            constructor(demical){
+                super(demical);
+                // call the composition class
+                this.type = new ConvererType();
+            }
+            // polymorphism
+            // this function is to convert the decimal number to hexadecimal
+            // The function changes a decimal number into a hexadecimal number by repeatedly dividing the decimal number by 16 and recording the remainders. 
+            // It then reverses the order of the remainders and uses digits 0-9 and letters A-F to form the final hexadecimal number.
+            convert(){
+                let answer = [];
+                let result = "";
+                while(this.demical != 0){
+                    let rem = this.demical % 16;
+                    answer.push(rem);
+                    this.demical = Math.floor(this.demical / 16);
+                }
+                for(let i = answer.length-1; i >= 0; i--){
+                    if(answer[i] < 10){
+                        result += answer[i];
+                    }else{
+                        if (answer[i] == 10){
+                            result += 'A';
+                        }else if(answer[i] == 11){
+                            result += 'B';
+                        }else if(answer[i] == 12){
+                            result += 'C';
+                        }else if(answer[i] == 13){
+                            result += 'D';
+                        }else if(answer[i] == 14){
+                            result += 'E';
+                        }
+                        else if(answer[i] == 15){
+                            result += 'F';
+                        }
+                    }
+                    
+                }
+                return result;
+            }
+       }
+       function main(){
+        // asynchrous programming 
+        // to wait the calculation first before proceding to next steps
+            const convert = new Promise((resolve, reject) => {
+                // get the user input the number and the converter type;
+                const number = parseInt(document.getElementById('number').value);
+                const converter = document.getElementById('converter').value;
+                let result = document.getElementById('result');
+                // then identify the type of converter
+                // then convert the number
+                // then display the result
+                // then if the converter is not binary, octal, or hexadecimal, then display an error message
+                // then return the resolve or reject if it's the calculation is done
+                if(converter == 'binary'){
+                    const decimalToBinary = new DecimalToBinary(number);
+                    // display some delay
+                    result.innerHTML = `Calculating....`;
+                    setTimeout(() => {
+                        result.innerHTML = `Result: decimal:${number} binary:${decimalToBinary.convert()}`; 
+                    }, 3000);
+                    // get the method from the composition class
+                    resolve(decimalToBinary.type.binary());
+                    return;
+                }else if(converter == 'octal'){
+                    const decimalToOctal = new DecimalToOctal(number);
+                    // display some delay
+                    result.innerHTML = `Calculating....`;
+                    setTimeout(() => {
+                        result.innerHTML = `Result: decimal:${number} octal:${decimalToOctal.convert()}`;
+                    }, 3000);
+                     // get the method from the composition class
+                     resolve(decimalToOctal.type.octal());
+                     return;
+                }else if(converter == 'hexadecimal'){
+                    const decimalToHexadecimal = new DecimalToHexadecimal(number);
+                    // display some delay
+                    result.innerHTML = `Calculating....`;
+                    setTimeout(() => {
+                        result.innerHTML = `Result: decimal:${number} hexadecimal:${decimalToHexadecimal.convert()}`;
+                    }, 3000);
+                     // get the method from the composition class
+                     resolve(decimalToHexadecimal.type.hexadecimal());
+                     return;
+                }
+                reject('Invalid converter or the calculation');
+            });
+            // then display the result
+            convert.then((result) => {
+                alert(result);
+            }).catch((error) => {
+                alert(error);
+            })
+       }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Converter</h1>
+        <h2 id="result">Result: </h2>
+        <p>"Effortlessly Convert Decimal Numbers to Binary, Octal, and Hexadecimal Formats"</p>
+        <select id="converter">
+            <option value="binary">Binary</option>
+            <option value="octal">Octal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+        </select>
+        <input type="number" id="number" placeholder="Enter a decimal" required>
+        <button onclick="main()">Convert</button>
+    </div>
+</body>
+</html>

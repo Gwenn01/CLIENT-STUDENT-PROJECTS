@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #CAE7DF;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #E8EAE3;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        .search, .registration, .bookList {
+            margin-bottom: 20px;
+        }
+
+        .search, .registration {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        .search h2, .registration h2, .bookList h2 {
+            margin-bottom: 10px;
+        }
+        #search{
+            color: white;
+            background-color: #188d16;
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+        #search:hover{
+            background-color: #126411;
+        }
+        .search input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+        }
+
+        .form label {
+            display: block;
+        }
+
+        .form input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #188d16;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .form button:hover {
+            background-color: #136911;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        button#display, button#delete {
+            margin-top: 10px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #dc3545;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button#display:hover, button#delete:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Book Shop</h1>
+        <div class="search">
+            <h2>Search</h2>
+            <div>
+                <label>Book ID:</label>
+                <input type="text" id="booksearch">
+                <button id="search" onclick="searchh()">Search</button>
+            </div>
+        </div>
+        <div class="registration">
+            <h2>Registration</h2>
+            <div class="form">
+                <label for="bookid">Book ID:</label>
+                <input type="text" id="bookid" required>
+                <label for="bookname">Book Name:</label>
+                <input type="text" id="bookname" required>
+                <label for="bookedition">Book Edition:</label>
+                <input type="text" id="bookedition" required>
+                <label for="bookauthor">Book Author:</label>
+                <input type="text" id="bookauthor" required>
+                <label for="bookprice">Book Price:</label>
+                <input type="text" id="bookprice" required>
+                <label for="bookquantity">Book Quantity:</label>
+                <input type="text" id="bookquantity" required>
+                <button id="save" onclick="save()">Save</button>
+                <button id="clear" onclick="clearr()">Clear</button>
+            </div>
+        </div>
+        
+        <div class="bookList">
+            <h2>Book List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Book Name</th>
+                        <th>Book Edition</th>
+                        <th>Book Author</th>
+                        <th>Book Price</th>
+                        <th>Book Quantity</th>
+                    </tr>
+                </thead>
+                <tbody id="bookData">
+                    <!-- Book data will be populated here -->
+                </tbody>
+            </table>
+            <button id="display" onclick="display()">Display</button>
+            <button id="delete" onclick="deletee()">Delete</button>
+        </div>
+    </div>
+</body>
+<script>
+    // container for every book
+    let books = [];
+    // composition class that can use in every class
+    class DisplayBook{
+            displayBook(){
+                // container to append the book data in html form 
+                let bookHtml = "";
+                // iterate through the book data
+                for(let i = 0; i < books.length; i++){
+                    // template for every book data
+                    let bookTemp = `
+                        <tr>
+                            <td>${books[i].bookid}</td>
+                            <td>${books[i].bookname}</td>
+                            <td>${books[i].bookedition}</td>
+                            <td>${books[i].bookauthor}</td>
+                            <td>${books[i].bookprice}</td>
+                            <td>${books[i].bookquantity}</td>
+                        </tr>
+                    `;
+                    // appending
+                    bookHtml += bookTemp;
+                }
+                // displaying the book data in the html
+                document.getElementById('bookData').innerHTML = bookHtml;
+                return true;
+            }
+    }
+    // main class of polymorphism
+    class SaveBook{
+        // constructor for every book to store the book data
+        constructor(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity){
+            this.bookid = bookid;
+            this.bookname = bookname;
+            this.bookedition = bookedition;
+            this.bookauthor = bookauthor;
+            this.bookprice = bookprice;
+            this.bookquantity = bookquantity;
+            // make a instance of composition class
+            this.display = new DisplayBook();
+        }
+        // method to add the book data in the container
+        operateTheBook(){
+            // create a object of the book data
+            let bookObject = {
+                bookid: this.bookid,
+                bookname: this.bookname,
+                bookedition: this.bookedition,
+                bookauthor: this.bookauthor,
+                bookprice: this.bookprice,
+                bookquantity: this.bookquantity
+            }
+            // add it in the container
+            books.push(bookObject);
+            return true;
+        }
+    }
+    class SearchBook extends SaveBook{
+        // inherit the parent constructor
+        constructor(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity){
+            super(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity);
+             // make a instance of composition class
+             this.display = new DisplayBook();
+        }
+        operateTheBook(){
+            // first get the id you want to search
+            let id = document.getElementById("booksearch").value;
+            console.log(id);
+            // iterate through the book data
+            for(let i = 0; i < books.length; i++){
+            // if the object book match in the user input id the display
+                if(books[i].bookid == id){
+                    let bookTemp = `
+                        <tr>
+                            <td>${books[i].bookid}</td>
+                            <td>${books[i].bookname}</td>
+                            <td>${books[i].bookedition}</td>
+                            <td>${books[i].bookauthor}</td>
+                            <td>${books[i].bookprice}</td>
+                            <td>${books[i].bookquantity}</td>
+                        </tr>
+                        `;
+                    document.getElementById("bookData").innerHTML = bookTemp;
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    class ClearBook extends SearchBook{
+            // inherit the parernt constructor
+            constructor(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity){
+                super(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity);
+                // make a instance of composition class
+                this.display = new DisplayBook();
+            }
+            operateTheBook(){
+                // get all the inputs element and then remove it's value 
+                document.getElementById("bookid").value = "";
+                document.getElementById("bookname").value = "";
+                document.getElementById("bookedition").value = "";
+                document.getElementById("bookauthor").value = "";
+                document.getElementById("bookprice").value = "";
+                document.getElementById("bookquantity").value = "";
+                return true;
+            }
+    }
+    class DeleteBook extends SearchBook{
+        // inherit the parernt constructor
+            constructor(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity){
+                super(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity);
+                // make a instance of composition class
+                this.display = new DisplayBook();
+            }
+            // empty the container book and remove it also in the dom
+            operateTheBook(){
+                books = [];
+                document.getElementById('bookData').innerHTML = "";
+                return true;
+            }
+    }
+
+    // make a function to save the book to call it in the button
+    function save(){
+        // asnychronous 
+        // Once the task is done, your program can come back to it and finish what it needs to do.
+        const operate = new Promise((resolve, reject) => {
+            let bookid = document.getElementById("bookid").value;
+            let bookname = document.getElementById("bookname").value;
+            let bookedition = document.getElementById("bookedition").value;
+            let bookauthor = document.getElementById("bookauthor").value;
+            let bookprice = document.getElementById("bookprice").value;
+            let bookquantity = document.getElementById("bookquantity").value;
+            // if user didn't fill all the fields, then return
+            if(bookid == "" || bookname == "" || bookedition == "" || bookauthor == "" || bookprice == "" || bookquantity == ""){
+                alert("Please fill all the fields");
+                return;
+            }
+            let saveBookInstance = new SaveBook(bookid, bookname, bookedition, bookauthor, bookprice, bookquantity);
+                // call the saveBook function
+                if(saveBookInstance.operateTheBook()){
+                     // call the compostion method
+                    saveBookInstance.display.displayBook();
+                    resolve("Book saved successfully");
+                }else{
+                    reject("Book not saved");
+                };
+        });
+        // call if its successfully done the program
+        operate.then((message) => {
+            alert(message);
+        }).catch((message) => {
+            alert(message);
+        });
+    };
+    function searchh(){
+        // make the instance of search class then call the method and the compostion method
+        let searchInstance = new SearchBook();
+        // calss the method
+        if(searchInstance.operateTheBook()){
+            alert('Book searched successfully');
+        }else{
+            alert('Book is not found!');
+        }
+    }
+    function display(){
+        // make the instance of display class then call the method and the compostion method
+        let displayInstance = new DisplayBook();
+        // calss the method
+        if(displayInstance.displayBook()){
+            alert('Book displayed successfully');
+        }else{
+            alert('Book not displayed');
+        };
+    }
+    // function clear to clear the fields
+    function clearr(){
+        // make the instance of clear class then call the method and the compostion method
+        let clearInstance = new ClearBook();
+        // calss the method
+        if(clearInstance.operateTheBook()){
+            alert('Inputs sucessfully cleared');
+        }else{
+            alert('Inputs not cleared');
+        }
+    }
+    // function to delete the book
+    function deletee(){
+        // make the instance of delete class then call the method and the compostion method
+        let deleteInstance = new DeleteBook();
+        let operate = new Promise((resolve, reject) => {
+             // call the compostion method
+            if(deleteInstance.operateTheBook()){
+                deleteInstance.display.displayBook();
+                resolve("Book deleted successfully");
+            }else{
+                reject("Book not deleted");
+            }
+        });
+        // call if its successfully done the program
+        operate.then((message) => {
+            alert(message);
+        }).catch((message) => {
+            alert(message);
+        });
+    }
+</script>
+</html>

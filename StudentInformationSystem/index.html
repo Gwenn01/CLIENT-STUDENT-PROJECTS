@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information System</title>
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            background-color: #FAF0DC;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            flex: 1;
+            margin: 5px;
+            min-width: 120px;
+        }
+
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .student-form {
+            margin-bottom: 20px;
+        }
+
+        .student-form .form {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+        }
+
+        .student-form label {
+            align-self: center;
+        }
+
+        .student-form input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .student-form button {
+            grid-column: span 2;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .student-form button:hover {
+            background-color: #218838;
+        }
+
+        .student-list {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .student-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .student-list th, .student-list td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .student-list th {
+            background-color: #f2f2f2;
+        }
+
+        .student-list tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .student-list tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>STUDENT INFORMATION SYSTEM</h1>
+        <p id="wait"></p>
+        <p>"Note: Before seeing the result, you should click the 'Display All Students' button."</p>
+        <div class="buttons">
+            <button id="add-student">Add Student</button>
+            <button id="update-student">Update Student</button>
+            <button id="display-single-student">Display Single Student</button>
+            <button id="display-all-student">Display All Students</button>
+            <button id="delete-single-student">Delete Single Student</button>
+            <button id="delete-all-student">Delete All Students</button>
+        </div>
+        <div class="container-two">
+            <div class="student-form">
+                <div class="form">
+                    <label for="id">Student Id:</label>
+                    <input type="text" id="id" name="id" required>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <label for="age">Age:</label>
+                    <input type="text" id="age" name="age" required>
+                    <label for="gender">Gender:</label>
+                    <input type="text" id="gender" name="gender" required>
+                    <label for="course">Course:</label>
+                    <input type="text" id="course" name="course" required>
+                </div>
+            </div>
+        </div>
+        <div class="student-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Course</th>
+                    </tr>
+                </thead>
+                <tbody id="studentData">
+                    <!-- Student data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        </div>
+</body>
+<script>
+    // declare the container of the students information
+    let students = [];
+    // delacre the conatiner for table html
+    let studentDataTabale = "";
+    // make a composition to push the message every time the button is clicked
+    class Student{
+        pushAddMessage(){
+            return "Student added successfully";
+        }
+        pushDisplayMessage(){
+            return "Student displayed successfully";
+        }
+        pushUpdateMessage(){
+            return "Student updated successfully";
+        }
+        pushDeleteMessage(){
+            return "Student deleted successfully";
+        }   
+    }
+
+    // polymorphism class we declare the class whith same method but different implementation}
+    class AddStudent{
+        // get the user input
+        constructor(){
+            this.id = document.getElementById("id").value;
+            this.name = document.getElementById("name").value;
+            this.age = document.getElementById("age").value;
+            this.gender = document.getElementById("gender").value;
+            this.course = document.getElementById("course").value;
+            // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+         // polymorphism
+        processInfo(){
+            // check if the user input is empty
+            if(this.id == "" || this.name == "" || this.age == "" || this.gender == "" || this.course == ""){
+                alert("Please fill all the fields");
+                return;
+            }
+            // create the object of the student
+            let studentData = {
+                id: this.id,
+                name: this.name,
+                age: this.age,
+                gender: this.gender,
+                course: this.course
+            };
+            // push the student object to the container
+            students.push(studentData);
+        }
+        // clear the input fields
+        clearInputFields(){
+            document.getElementById("id").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("gender").value = "";
+            document.getElementById("course").value = "";
+        }
+    }
+     // polymorphism
+     class DisplaySingleStudent extends  AddStudent{
+        constructor(){
+            super(id, name, age, gender, course);
+            // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+         // polymorphism
+        processInfo(){
+            // check if the container is empty
+            if(students.length == 0){
+                alert("No student data available");
+                return;
+            }
+            // get the user id to be display
+            let id = prompt('Enter the id of the student you want to display');
+            // iterate to find the student withe the id of user input
+            for(let i = 0; i < students.length; i++){
+                if(students[i].id == id){
+                    let studentData =  `
+                        <tr>
+                            <td>${students[i].id}</td>
+                            <td>${students[i].name}</td>
+                            <td>${students[i].age}</td>
+                            <td>${students[i].gender}</td>
+                            <td>${students[i].course}</td>
+                        </tr>
+                    `;
+                    document.getElementById("studentData").innerHTML = studentData;
+                    return;
+                }
+            }
+            alert('Invalid id!!');
+        }
+    }
+     // polymorphism
+    class DisplayAllStudent extends DisplaySingleStudent{
+        constructor(){
+            super(id, name, age, gender, course);
+              // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+        // polymorphism
+        processInfo(){
+            // to display the student data iterate through it
+            // clear first the contaner data to avoid duplication
+            studentDataTabale = "";
+            for(let i = 0; i < students.length; i++){
+                let studentData =  `
+                    <tr>
+                        <td>${students[i].id}</td>
+                        <td>${students[i].name}</td>
+                        <td>${students[i].age}</td>
+                        <td>${students[i].gender}</td>
+                        <td>${students[i].course}</td>
+                    </tr>
+                `;
+                // apend the student data to the container
+                studentDataTabale += studentData;
+            }
+            // and display all of the students that store in container
+            document.getElementById("studentData").innerHTML = studentDataTabale;
+        }
+    }
+     // polymorphism
+    class UpdateStudent extends DisplayAllStudent{
+        constructor(){
+            super(id, name, age, gender, course);
+              // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+         // polymorphism
+        processInfo(){
+            // get the updated value in the prompt
+            let idUpdated = prompt('Enter the id of the student you want to update');
+            // get the user data to be updated
+            const id = document.getElementById("id").value;
+            const name = document.getElementById("name").value;
+            const age = document.getElementById("age").value;
+            const gender = document.getElementById("gender").value;
+            const course = document.getElementById("course").value;
+            // iterate through the student data to find the student with the id of user input
+            for(let i = 0; i < students.length; i++){
+                // updated the data if its match
+                if(students[i].id == idUpdated){
+                   students[i].id = id;
+                   students[i].name = name;
+                   students[i].age = age;
+                   students[i].gender = gender;
+                   students[i].course = course;
+                }
+            }
+        }
+        // reusable codes 
+        clearInputFields(){
+            super.clearInputFields();
+        }
+    }
+     // polymorphism
+    class DeleteSingleStudent extends AddStudent{
+        constructor(){
+            super(id, name, age, gender, course);
+              // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+         // polymorphism
+        processInfo(){
+            // get the delete if using prompt
+            let idDeleted = prompt('Enter the id of the student you want to delete');
+            // iterate through the student data to find the student with the id of user input
+            for(let i = 0; i < students.length; i++){
+                if(students[i].id == idDeleted){
+                    students.splice(i, 1);
+                }
+            }
+        }   
+        
+    }
+    class DeleteAllStudent extends DeleteSingleStudent{
+        constructor(){
+            super(id, name, age, gender, course);
+              // get the instances of the composition to use the method
+            this.push = new Student();
+        }
+        // polymorphism
+
+        processInfo(){
+            //empty the student data
+            students = [];
+        }
+    }
+      // process the data if the button is click
+    document.getElementById("add-student").addEventListener("click", function(){
+        // asynchrous
+        // so that the data process properly 
+       let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let addStudent = new AddStudent();
+            addStudent.processInfo();
+            addStudent.clearInputFields();
+            // call the composition method to push the message
+            resolve(addStudent.push.pushAddMessage());
+       });
+       // then call the method and display if it's properly working
+       process.then((result) => {
+           alert(result);
+       });
+    });
+      // process the data if the button is click
+    document.getElementById("display-single-student").addEventListener("click", function(){
+          // asynchrous
+        // so that the data process properly 
+        let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let displayStudent = new DisplaySingleStudent();
+                // call the composition method to push the message
+            displayStudent.processInfo();
+            resolve(displayStudent.push.pushDisplayMessage());
+        });
+        // then call the method and display if it's properly working
+       process.then((result) => {
+           alert(result);
+       });
+    });
+      // process the data if the button is click
+    document.getElementById("display-all-student").addEventListener("click", function(){
+          // asynchrous
+        // so that the data process properly 
+        let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let displayAllStudent = new DisplayAllStudent();
+                // call the composition method to push the message
+            displayAllStudent.processInfo();
+            resolve(displayAllStudent.push.pushDisplayMessage());
+        });
+        // then call the method and display if it's properly working
+       process.then((result) => {
+           alert(result);
+        })
+    });
+      // process the data if the button is click
+    document.getElementById("update-student").addEventListener("click", function(){
+          // asynchrous
+        // so that the data process properly 
+        let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let updateStudent = new UpdateStudent();
+                // call the composition method to push the message
+            updateStudent.processInfo();
+            resolve(updateStudent.push.pushUpdateMessage());
+        });
+        // then call the method and display if it's properly working
+       process.then((result) => {
+            alert(result);
+        })
+    });
+      // process the data if the button is click
+    document.getElementById("delete-single-student").addEventListener("click", function(){
+          // asynchrous
+        // so that the data process properly 
+        let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let deleteStudent = new DeleteSingleStudent();
+            // call the composition method to push the message
+            deleteStudent.processInfo();
+            resolve(deleteStudent.push.pushDeleteMessage());
+        });
+        // then call the method and display if it's properly working
+       process.then((result) => {
+            alert(result);
+        });
+    });
+    // process the data if the button is click
+    document.getElementById("delete-all-student").addEventListener("click", function(){
+        // asynchrous
+        // so that the data process properly 
+        let process = new Promise((resolve, reject) => {
+            // create the instance of the object
+            let deleteAllStudent = new DeleteAllStudent();
+            // call the composition method to push the message
+            deleteAllStudent.processInfo();
+            resolve(deleteAllStudent.push.pushDeleteMessage());
+        });
+         // then call the method and display if it's properly working
+       process.then((result) => {
+            alert(result);
+        });
+    })
+    
+</script>
+</html>

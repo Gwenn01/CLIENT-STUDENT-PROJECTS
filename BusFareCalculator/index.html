@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Fare Calculator</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #172D13;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #D76F30;
+            text-align: center;
+        }
+
+        p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        #totalPayment {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        h3 {
+            margin: 10px 0 5px 0;
+            font-size: 18px;
+        }
+
+        select, input, button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #D76F30;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+    <script>
+        // COMPOSITION
+        class BusFareCalculator {
+            // this function can call in different class
+            calculateFare(kilometer) {
+                return kilometer * 55;
+            }
+        }
+        // POLYMORPHISM
+        class Regular{
+            constructor(kilometer) {
+                this.kilometer = kilometer;
+                // this is composition instances of main class that calculate the bus fare before dicount
+                this.calculate = new BusFareCalculator();
+            }
+            discountFare(){
+                let discount = this.calculate.calculateFare(this.kilometer) * 0;
+                // calss the function using composition
+                return this.calculate.calculateFare(this.kilometer) - discount;
+            }
+        }
+        
+        class Student extends Regular{
+            constructor(kilometer) {
+                super(kilometer);
+                // this is composition instances of main class that calculate the bus fare before dicount
+                this.calculate = new BusFareCalculator();
+            }
+            // calculate the discount and then call the method that calculate the total amount and subtract the discount
+            discountFare(){
+                let discount = this.calculate.calculateFare(this.kilometer) * 0.10;
+                // calss the function using composition
+                return this.calculate.calculateFare(this.kilometer) - discount;
+            }
+        }
+        class SeniorCitezen extends Student{
+            constructor(kilometer) {
+                super(kilometer);
+                // this is composition instances of main class that calculate the bus fare before dicount
+                this.calculate = new BusFareCalculator();
+            }
+            // calculate the discount and then call the method that calculate the total amount and subtract the discount
+            discountFare(){
+                let discount = this.calculate.calculateFare(this.kilometer) * 0.20;
+                // calss the function using composition
+                return this.calculate.calculateFare(this.kilometer) - discount;
+            }
+        }
+        class PWD extends SeniorCitezen{
+            constructor(kilometer) {
+                super(kilometer);
+                // this is composition instances of main class that calculate the bus fare before dicount
+                this.calculate = new BusFareCalculator();
+            }
+            // calculate the discount and then call the method that calculate the total amount and subtract the discount
+            discountFare(){
+                let discount = this.calculate.calculateFare(this.kilometer) * 0.30;
+                // calss the function using composition
+                return this.calculate.calculateFare(this.kilometer) - discount;
+            }   
+        }
+        class GroupDiscount extends PWD{
+            constructor(kilometer) {
+                super(kilometer);
+                // this is composition instances of main class that calculate the bus fare before dicount
+                this.calculate = new BusFareCalculator();
+            }
+            // calculate the discount and then call the method that calculate the total amount and subtract the discount
+            discountFare(){
+                let discount = this.calculate.calculateFare(this.kilometer) * 0.50;
+                // calss the function using composition
+                return this.calculate.calculateFare(this.kilometer) - discount;
+            }
+        }
+
+        // to perform the task
+        function calculate() {
+            // get all the values from the user
+            let kilometer = parseInt(document.getElementById('kilometer').value);
+            let discount = document.getElementById('option').value;
+            let dispayTotalAmount = document.getElementById('totalPayment');
+            // asynchronous programming to wait the program finish all the tasks before displaying the result
+            // this function is define wahts class to be call and perform specific task in every class
+            // make a instances of the class and call it's method then return the value
+            const getDiscount = new Promise((resolve, reject) => {
+                if(discount == 'regular'){
+                    let regular = new Regular(kilometer);
+                    let fare = regular.discountFare();
+                    resolve(fare);
+                }else if(discount == 'student'){
+                    let student = new Student(kilometer);
+                    let fare = student.discountFare();
+                    resolve(fare);
+                }else if(discount == 'senior'){
+                    let seniorCitezen = new SeniorCitezen(kilometer);
+                    let fare = seniorCitezen.discountFare();
+                    resolve(fare);
+                }else if(discount == 'pwd'){
+                    let pwd = new PWD(kilometer);
+                    let fare = pwd.discountFare();
+                    resolve(fare);
+                }else if(discount == 'group'){
+                    let groupDiscount = new GroupDiscount(kilometer);
+                    let fare = groupDiscount.discountFare();
+                    resolve(fare);
+                }
+                reject('Invalid Discount or Error');
+            });
+            // then call the asycnchrous function to get the result or the error and if the all program has been calculated properly
+            getDiscount.then((fare) => {
+                dispayTotalAmount.innerHTML = `Total Amount: ${fare}`;
+                alert('Successfully Calculated');
+            }).catch((error) => {
+                alert(error);
+            });
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Bus Fare Calculator</h1>
+        <b><p>55 pesos per kilometer</p></b>
+        <h2 id="totalPayment">Total Payment: </h2>
+        <div>
+            <h3>discount:</h3>
+            <p>Regular 0%</p>
+            <p>Student 10%</p>
+            <p>Senior Citizen 20%</p>
+            <p>PWD 30%</p>
+            <p>Group Discount 50%</p>
+        </div>
+        <select name="option" id="option">
+            <option value="regular">Regular</option>
+            <option value="student">Student</option>
+            <option value="senior">Senior Citezen</option>
+            <option value="pwd">PWD</option>
+            <option value="group">Group Discount</option>
+        </select>
+        <input type="number" id="kilometer" placeholder="Enter Kilometer" required>
+        <button onclick="calculate()">Calculate</button>
+    </div>
+</body>
+</html>

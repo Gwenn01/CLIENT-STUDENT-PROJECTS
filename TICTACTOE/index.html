@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F6F4F2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #F6F4F2;
+        }
+
+        .container {
+            background: #425664;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .header {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .score p {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+            font-size: 1em;
+        }
+
+        .winner {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mainBoard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 5px;
+        }
+
+        button {
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            font-size: 2em;
+            width: 80px;
+            height: 80px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #bdbdbd;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .reset {
+            background: #ff5722;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            padding: 5px 10px;
+        }
+
+        .reset:hover {
+            background: #e64a19;
+        }
+        @media (max-width: 600px) {
+            .mainBoard button {
+                font-size: 2em;
+                width: 80px; /* Adjusted for smaller screens */
+                height: 80px; /* Adjusted for smaller screens */
+            }
+
+            .header {
+                font-size: 2em;
+            }
+
+            .score p {
+                font-size: 1em;
+            }
+
+            .reset {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">TICTACTOE</header>
+        <div class="winner"></div>
+        <div class="score">
+            <p>Player One: <span id="player-one">0</span></p>
+            <p>Player Two: <span id="player-two">0</span></p>
+        </div>
+        <div class="board">
+            <div class="mainBoard">
+                <button id="btn1" class="board1" onclick="boardClick('0')"></button>
+                <button id="btn2" class="board2" onclick="boardClick('1')"></button>
+                <button id="btn3" class="board3" onclick="boardClick('2')"></button>
+                <button id="btn4" class="board4" onclick="boardClick('3')"></button>
+                <button id="btn5" class="board5" onclick="boardClick('4')"></button>
+                <button id="btn6" class="board6" onclick="boardClick('5')"></button>
+                <button id="btn7" class="board7" onclick="boardClick('6')"></button>
+                <button id="btn8" class="board8" onclick="boardClick('7')"></button>
+                <button id="btn9" class="board9" onclick="boardClick('8')"></button>
+            </div>
+        </div>
+        <button class="reset" onclick="resetBtn()">Reset</button>
+    </div>
+</body>
+<script>
+    // GLOBAL VARIBALES
+    // define the dom score
+    let playerOneScore = document.getElementById('player-one');
+    let playerTwoScore = document.getElementById('player-two');
+    // winner in dom
+    let winner = document.querySelector('.winner');
+    // BOARD
+    let board = [];
+    let isClick = [];
+    // dom board
+    let btn1 = document.getElementById("btn1");
+    let btn2 = document.getElementById("btn2");
+    let btn3 = document.getElementById("btn3");
+    let btn4 = document.getElementById("btn4");
+    let btn5 = document.getElementById("btn5");
+    let btn6 = document.getElementById("btn6");
+    let btn7 = document.getElementById("btn7");
+    let btn8 = document.getElementById("btn8");
+    let btn9 = document.getElementById("btn9");
+    // o and x
+    let pos = 0;
+    let pts = 0;
+    // determne if its player one or two
+    let isPlayer1 = true;
+    // COMPOSITION CLASS
+    class Board{
+        // displaying the board values
+        display(){
+            btn1.textContent = board[0];
+            btn2.textContent = board[1];
+            btn3.textContent = board[2];
+            btn4.textContent = board[3];
+            btn5.textContent = board[4];   
+            btn6.textContent = board[5];
+            btn7.textContent = board[6];
+            btn8.textContent = board[7];
+            btn9.textContent = board[8];  
+        }
+        // reset the display in the board if the reset has been clcik
+        resetDisplay(){
+            btn1.textContent = "";
+            btn2.textContent = "";
+            btn3.textContent = "";
+            btn4.textContent = "";
+            btn5.textContent = ""; 
+            btn6.textContent = "";
+            btn7.textContent = "";
+            btn8.textContent = "";
+            btn9.textContent = "";
+        }
+        // put default to btn, then change it to true if its alreasdy click
+        isClicked(){
+            for(let i = 0; i < 9; i++){
+                isClick[i] = false;
+            }
+        }
+        // reset if its draw all the score if its draw
+        resetDraw(){
+            board = [];
+            isPlayer1 = true;
+            for(let i = 0; i < 9; i++){
+                isClick[i] = false;
+            }
+            pos = 0;
+            pts = 0;
+            playerOneScore.innerHTML = 0;
+            playerTwoScore.innerHTML = 0;
+            winner.textContent = "";
+            btn1.textContent = "";
+            btn2.textContent = "";
+            btn3.textContent = "";
+            btn4.textContent = "";
+            btn5.textContent = "";
+            btn6.textContent = "";
+            btn7.textContent = "";
+            btn8.textContent = "";
+            btn9.textContent = ""; 
+        }
+    }
+    // COMPOSITION CLASS 
+
+    // POLYMORPHISM CLASS inhering with different functionality but same class name
+    class Draw{
+        constructor(){
+            // create a instance so that we can use all the method in the composition
+            this.display = new Board();
+        }
+        // polymorphism
+        winner(){
+            // check if all the the check board have already been click 
+            // if yes, return true, so it's draw
+            for(let i = 0; i < 9; i++){
+                if(!isClick[i]){
+                    return false
+                }
+            }
+            return true;
+        }
+    }
+    // POLYMORPHISM CLASS inhering with different functionality but same class name
+    class PlayerOne extends Draw{
+        constructor(){
+              // create a instance so that we can use all the method in the composition
+              super();
+              this.display = new Board();
+        }
+         // polymorphism
+        winner(){
+            // Check horizontal
+            if (board[0] == "X" && board[1] == "X" && board[2] == "X"){
+                return true
+            }
+            if (board[3] == "X" && board[4] == "X" && board[5] == "X"){
+                return true
+            }
+            if (board[6] == "X" && board[7] == "X" && board[5] == "8"){
+                return true
+            }
+            // check vertical
+            if (board[0] == "X" && board[3] == "X" && board[6] == "X"){
+                return true
+            }
+            if (board[1] == "X" && board[4] == "X" && board[7] == "X"){
+                return true
+            }
+            if (board[2] == "X" && board[5] == "X" && board[8] == "8"){
+                return true
+            }
+            // check the exis
+            if (board[2] == "X" && board[4] == "X" && board[6] == "X"){
+                return true
+            }
+            if (board[0] == "X" && board[4] == "X" && board[8] == "X"){
+                return true
+            }
+            return false;
+        }
+    }
+    // POLYMORPHISM CLASS inhering with different functionality but same class name
+    class PlayerTwo extends Draw{
+        constructor(){
+              // create a instance so that we can use all the method in the composition
+            super();
+            this.display = new Board();
+        }
+         // polymorphism
+        winner(){
+            // Check horizontal
+            if (board[0] == "O" && board[1] == "O" && board[2] == "O"){
+                return true
+            }
+            if (board[3] == "O" && board[4] == "O" && board[5] == "O"){
+                return true
+            }
+            if (board[6] == "O" && board[7] == "O" && board[5] == "8"){
+                return true
+            }
+            // check vertical
+            if (board[0] == "O" && board[3] == "O" && board[6] == "O"){
+                return true
+            }
+            if (board[1] == "O" && board[4] == "O" && board[7] == "O"){
+                return true
+            }
+            if (board[2] == "O" && board[5] == "O" && board[8] == "Os"){
+                return true
+            }
+            // check the ekis
+            if (board[2] == "O" && board[4] == "O" && board[6] == "O"){
+                return true
+            }
+            if (board[0] == "O" && board[4] == "O" && board[8] == "O"){
+                return true
+            }
+            return false;
+        }
+        
+    }
+    // determin the winner 
+    function DetermineWinners(){
+        // create all the instances of all the clases
+        let drawInstance = new Draw();
+        let playerOneInstance = new PlayerOne();
+        let playerTwoInstance = new PlayerTwo();
+        // then chekc which one is winner
+        // asynchronous so that it will wait the all process before procesing to the next step
+        // and the program will work properly
+        const process = new Promise((resolve, reject) =>{
+            // check the winners 
+            // and then make a calaculation
+            if(playerOneInstance.winner()){
+                // add the pos then display the winner
+                pos += 1;
+                playerOneScore.innerText = pos;
+                winner.innerText = "Player One Win";
+                // compostion call
+                playerOneInstance.display.display();
+                // delay the process to see the result
+                setTimeout(() => {
+                    // reset all after determine the winner
+                    // call the methos in the composition class
+                    board = [];
+                    isPlayer1 = true;
+                    // compostion call
+                    playerOneInstance.display.isClicked();
+                    playerOneInstance.display.resetDisplay();
+                }, 2000);   
+                resolve('Player One Win');
+                return;
+                
+            }else if(playerTwoInstance.winner()){
+                // add the pos then display the winner
+                pts += 1;
+                playerTwoScore.innerHTML = pts;
+                winner.innerText = "Player Two Win";
+                // compostion call
+                playerTwoInstance.display.display();
+                // delay the process to see the result
+                setTimeout(() => {
+                    // reset all after determine the winner
+                    // call the methos in the composition class
+                    board = [];
+                    isPlayer1 = true;
+                    // compostion call
+                    playerTwoInstance.display.isClicked();
+                    playerTwoInstance.display.resetDisplay();
+                }, 2000);  
+                resolve('Player Two Win');
+                return;
+            }else if(drawInstance.winner()){
+                winner.innerText = "Its a Draw";
+                drawInstance.display.display();
+                 // delay the process to see the result
+                setTimeout(() => {
+                    // reset all after determine the winner
+                    // call the methos in the composition class
+                    board = [];
+                    isPlayer1 = true;
+                    // compostion call
+                    drawInstance.display.isClicked();
+                    drawInstance.display.resetDisplay();
+                    drawInstance.display.resetDraw();
+                }, 2000);  
+                resolve('Its a Draw');
+                return;
+            }
+        });
+        //asychronous call
+        process.then((result) => {
+            
+            setTimeout(() => {
+                alert(result);
+            }, 1000);
+        });
+    }
+
+    function determineTheInput(index){
+        let boardInstance = new Board();
+        if (!isClick[index]){
+            // define who is player
+            if(isPlayer1){
+                // mark it in board
+                board[index] = "X";
+                isClick[index] = true;
+                // for every user click the button make a display for it
+                boardInstance.display();
+                isPlayer1 = false;
+                //check the winners
+                DetermineWinners();
+            }else{
+                board[index] = "O";
+                isClick[index] = true;
+                // for every user click the button make a display for it
+                boardInstance.display();
+                isPlayer1 = true;
+                //check the winners
+                DetermineWinners();
+            }
+        }
+        
+    }
+
+    //get the user inputs 
+    function boardClick(index){
+        determineTheInput(index);
+    }
+
+    function resetBtn(){
+        // this is to reset all the buttons and sores
+        let boardInstance = new Board();
+        board = [];
+        isPlayer1 = true;
+        // call the reusable function 
+        boardInstance.isClicked();
+        pos = 0;
+        pts = 0;
+        playerOneScore.innerHTML = 0;
+        playerTwoScore.innerHTML = 0;
+        winner.textContent = "";
+        btn1.textContent = "";
+        btn2.textContent = "";
+        btn3.textContent = "";
+        btn4.textContent = "";
+        btn5.textContent = ""; 
+        btn6.textContent = "";
+        btn7.textContent = "";
+        btn8.textContent = "";
+        btn9.textContent = ""; 
+    }
+</script>
+</html>
